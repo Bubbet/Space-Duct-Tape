@@ -11,19 +11,22 @@ namespace Space_Duct_Tape
         public const string NAME = "Space_Duct_Tape";
         public const string VERSION = "1.0.0";
 
-        private Harmony _harmony;
+        public static Main Instance;
         private Mod _mod;
 
         private void Awake()
         {
+            Instance = this;
             Logger.LogInfo($"{NAME} v{VERSION} is loading...");
 
             _mod = new Mod(NAME, VERSION);
-            _harmony = new Harmony(GUID);
 
+            _mod.RegisterNetworkMessage<ConfigSync>();
+            ConfigurablePatchAttribute.Configure(Config);
+            
             try
             {
-                _harmony.PatchAll();
+                // TODO move this into each patch
                 Logger.LogInfo($"{NAME} patches applied successfully.");
             }
             catch (System.Exception ex)
@@ -38,7 +41,7 @@ namespace Space_Duct_Tape
         {
             try
             {
-                _harmony?.UnpatchSelf();
+                // TODO move this into each patch
                 Logger.LogInfo($"{NAME} patches have been removed.");
             }
             catch (System.Exception ex)
